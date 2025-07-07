@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">skripsishinta</string>
+    <string name="title_home">NutriAid - Personalized\nTracking Made Easy</string>
+    <string name="description_home">Easily track and estimate the calorie content of \nthe food you consume.\nSnap a photo and get accurate calorie data instantly!</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="upload">Upload</string>
+    <string name="title_add">Input Image</string>
+    <string name="result">See Result</string>
+</resources>

@@ -29,6 +29,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tflite: Interpreter
     private lateinit var binding: ActivityMainBinding
 
+    private var imageUri: Uri? = null
+
+    private fun createImageUri(): Uri {
+        val image = File(applicationContext.filesDir, "camera_photo.png")
+        return FileProvider.getUriForFile(
+            applicationContext,
+            "com.example.skripsishinta.provider",
+            image
+        )
+    }
+
     private val foodLabels = listOf(
         "Ayam Goreng",
         "Cheese Cake",
@@ -74,9 +85,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
-        bitmap?.let {
-            binding.imagePlaceholder.setImageBitmap(it)
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            imageUri?.let {
+                binding.imagePlaceholder.setImageURI(it)
+            }
         }
     }
 
@@ -92,7 +105,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonCamera.setOnClickListener {
-            cameraLauncher.launch(null)
+            imageUri = createImageUri()
+            cameraLauncher.launch(imageUri!!)
         }
 
         binding.buttonUpload.setOnClickListener {
@@ -135,8 +149,7 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
 
-                    val bitmapWithBoxes = drawDetectionsOnBitmap(bitmap, nmsDetections)
-                    val imageUri = saveBitmapToCache(bitmap)
+                    val imageUri = saveBitmapToCache(bitmapWithBoxes)
 
                     val intent = Intent(this, ResultActivity::class.java).apply {
                         putParcelableArrayListExtra(
@@ -147,7 +160,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     startActivity(intent)
                 } else {
-                    Toast.makeText(this, "Gambar belum dipilih", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Tidak ada makanan yang terdeteksi", Toast.LENGTH_SHORT).show()
                 }
             }
         }
